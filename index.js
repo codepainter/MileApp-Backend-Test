@@ -80,7 +80,11 @@ async function putPackage (req, res) {
     const found = await Transaction.findById({ transaction_id: id })
     if (!found) return res.status(404).json({ error: 'transaction not found' })
 
-    if (!isValidTransaction(transactionInfo)) return res.status(400).json({ error: 'transaction payload invalid' })
+    try {
+        isValidTransaction(transactionInfo)
+    } catch (error) {
+        return res.status(400).json({ error: error.message })
+    }
 
     const created = await Transaction.create({
         transaction_id: id,
@@ -98,7 +102,11 @@ async function patchPackage (req, res) {
     const found = await Transaction.findById({ transaction_id: id })
     if (!found) return res.status(404).json({ error: 'transaction not found' })
 
-    if (!isValidTransaction(transactionInfo)) return res.status(400).json({ error: 'transaction payload invalid' })
+    try {
+        isValidTransaction(transactionInfo)
+    } catch (error) {
+        return res.status(400).json({ error: error.message })
+    }
 
     const updated = await Transaction.updateById({
         transaction_id: id,
@@ -111,15 +119,14 @@ async function patchPackage (req, res) {
 }
 
 function isValidTransaction (transasctionInfo) {
-    // TODO: improve this
-    if (!transasctionInfo.hasOwnProperty('customer_code')) return false
-    if (!transasctionInfo.hasOwnProperty('transaction_amount')) return false
-    if (!transasctionInfo.hasOwnProperty('transaction_payment_type')) return false
-    if (!transasctionInfo.hasOwnProperty('transaction_code')) return false
-    if (!transasctionInfo.hasOwnProperty('location_id')) return false
-    if (!transasctionInfo.hasOwnProperty('transaction_payment_type_name')) return false
-    if (!transasctionInfo.hasOwnProperty('connote_id')) return false
-    if (!transasctionInfo.hasOwnProperty('koli_data')) return false
+    if (!transasctionInfo.hasOwnProperty('customer_code')) throw new Error('transaction doesnt have customer_code')
+    if (!transasctionInfo.hasOwnProperty('transaction_amount')) throw new Error('transaction doesnt have transaction_amount')
+    if (!transasctionInfo.hasOwnProperty('transaction_payment_type')) throw new Error('transaction doesnt have transaction_payment_type')
+    if (!transasctionInfo.hasOwnProperty('transaction_code')) throw new Error('transaction doesnt have transaction_code')
+    if (!transasctionInfo.hasOwnProperty('location_id')) throw new Error('transaction doesnt have location_id')
+    if (!transasctionInfo.hasOwnProperty('transaction_payment_type_name')) throw new Error('transaction doesnt have transaction_payment_type_name')
+    if (!transasctionInfo.hasOwnProperty('connote_id')) throw new Error('transaction doesnt have connote_id')
+    if (!transasctionInfo.hasOwnProperty('koli_data')) throw new Error('transaction doesnt have koli_data')
     return true
 }
 
